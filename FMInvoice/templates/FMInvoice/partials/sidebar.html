@@ -1,0 +1,101 @@
+<!-- navbar vertical -->
+<!-- Sidebar -->
+{% load static %}
+{% with request.resolver_match.url_name as url_name %}
+ <div class="navbar-vertical navbar nav-dashboard">
+     <div class="h-100" data-simplebar>
+         <!-- Brand logo -->
+         {% if request.user.is_authenticated and request.user.is_staff or request.user.is_superuser %}
+         <span>
+          <a class="navbar-brand" href="{% url 'index' %}">
+             <img src="{% static 'assets/images/brand/logo/adjust.svg'%} " alt="dash ui - bootstrap 5 admin dashboard template"><span class="text-dark mx-2">Ackerman</span>
+         </a>
+        
+         </span>
+
+         <!-- Navbar nav -->
+         <ul class="navbar-nav flex-column" id="sideNavbar">
+
+             <!-- Nav item -->
+             <li class="nav-item">
+                 <div class="navbar-heading">Menu</div>
+             </li>
+             <!-- Nav item -->
+             <li class="nav-item">
+                 <a class="nav-link has-arrow {% if url_name == 'index' %} active {% endif %} "
+                     href="{% url 'index' %}">
+                     <i data-feather="home" class="nav-icon me-2 icon-xxs" >
+                     </i> Accueil
+                 </a>
+             </li>
+
+             
+             <!-- Nav item -->
+            
+            <li class="nav-item">
+                 <a class="nav-link has-arrow " href="#!" data-bs-toggle="collapse" data-bs-target="#navEmail" aria-expanded="false" aria-controls="navEmail">
+                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-mail nav-icon me-2 icon-xxs"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg> Courrier électronique
+                 </a>
+
+                 <div id="navEmail" class="collapse  show " data-bs-parent="#sideNavbar">
+                     <ul class="nav flex-column">
+                         <li class="nav-item">
+                             <a class="nav-link has-arrow {% if url_name == 'index' %} active {% endif %}" href="{% url 'index' %}">
+                                Vos messages reçus
+                             </a>
+                         </li>
+                         <li class="nav-item">
+                             <a class="nav-link has-arrow {% if url_name == 'index' %} active {% endif %}" href="{% url 'index' %}">
+                                 Vos messages envoyés                                
+                             </a>
+                         </li>
+                         
+                     </ul>
+                 </div>
+             </li>
+            <!-- Nav item -->
+             <li class="nav-item">
+                 <a class="nav-link has-arrow {% if url_name == 'index' %} active {% endif %}"
+                     href="">
+                     <i data-feather="folder-plus" class="nav-icon me-2 icon-xxs" >
+                     </i> Gestionnaire de vos fichiers
+                 </a>
+             </li>
+            
+            {% endif %}
+            {% if request.user.is_authenticated and request.user.is_superuser %}
+             <!-- Nav item -->
+             <li class="nav-item">
+                 <a class="nav-link has-arrow {% if url_name == 'employee_index' %} active {% endif %} "
+                     href="">
+                     <i data-feather="users" class="nav-icon me-2 icon-xxs" >
+                     </i> Utilisateurs
+                 </a>
+             </li>
+
+             <!-- Nav item -->
+             <li class="nav-item">
+                 <a class="nav-link has-arrow {% if url_name == 'employee_service_index' %} active {% endif %}"
+                     href="">
+                     <i data-feather="home" class="nav-icon me-2 icon-xxs" >
+                     </i> Services des employés
+                 </a>
+             </li>
+
+             <!-- Nav item -->
+             <li class="nav-item">
+                 <a class="nav-link has-arrow {% if url_name == 'mail' %} active {% endif %}"
+                     href="{% url 'index' %}">
+                     <i data-feather="tag" class="nav-icon me-2 icon-xxs" >
+                     </i> Catégorie des messages
+                 </a>
+             </li>
+
+
+
+        <!-- Nav item -->
+        </ul>
+        {% endif %}
+    </div>
+</div>
+{% endwith %}

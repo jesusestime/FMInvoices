@@ -1,0 +1,90 @@
+{% extends 'app/layouts/default.html' %} {% block content %}
+<!-- Page Content -->
+
+
+    <div id="app-content">
+      <!-- Container fluid -->
+      <div class="app-content-area">
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-lg-12 col-md-12 col-12">
+              <!-- Page header -->
+              <div class="mb-5">
+                  {% if messages %}
+                    {% for message in messages %} 
+                      <div class="alert alert-primary alert-dismissible fade show" role="alert">
+                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-info-circle-fill me-2" viewBox="0 0 16 16">
+                          <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/>
+                        </svg>
+                        <strong>Information!</strong> {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                          <span aria-hidden="true"></span>
+                        </button>
+                      </div>
+                    {% endfor %}
+                  {% endif %}
+                <h3 class="mb-0">Services employés </h3>
+              </div>
+            </div>
+          </div>
+          <div>
+            <!-- row -->
+            <div class="row">
+              <div class="col-12">
+                <div class="card">
+                  <div class="card-header d-md-flex border-bottom-0">
+                    <div class="flex-grow-1">
+                      <a href="{% url 'employee_service_create' %}" class="btn btn-primary">+ Ajouter un service employé </a>
+                    </div>
+                  </div>
+                  <div class="card-body">
+                    <div class="table-responsive table-card">
+                      <table id="example" class="table text-nowrap table-centered mt-0" style="width: 100%">
+                        <thead class="table-light">
+                          <tr>
+                            <th>Id</th>
+                            <th>Status</th>
+                            <th>Nom</th>
+                            <th>Action</th>
+                            
+                          </tr>
+                        </thead>
+                        <tbody>
+                        {% for es in employee_service %}
+                          <tr>
+
+                            <td>{{ es.id }}</td>
+                            <td>{{ es.status }}</td>
+                            <td>{{ es.name }}</td>
+                            <td>
+                              
+                              <a href="{% url 'employee_service_edit' es.id %}" class="btn btn-ghost btn-icon btn-sm rounded-circle texttooltip"
+                                data-template="editOne">
+                                <i data-feather="edit" class="icon-xs"></i>
+                                <div id="editOne" class="d-none">
+                                  <span>Editer</span>
+                                </div>
+                              </a>
+                              <a onclick="return confirm('Souhaitez-vous supprimer ce service employé ?')"  href=" {% url 'employee_service_delete' es.id %}"  class="btn btn-ghost btn-icon btn-sm rounded-circle texttooltip" 
+                                data-template="trashOne">
+                                <i data-feather="trash-2" class="icon-xs"></i>
+                                <div id="trashOne" class="d-none">
+                                  <span>Supprimer</span>
+                                </div>
+                              </a>
+                            </td>
+                          </tr>
+                        {% endfor %}
+                         
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+{% endblock %}

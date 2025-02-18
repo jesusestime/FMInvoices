@@ -1,0 +1,132 @@
+
+{% extends 'FMInvoice/layouts/default.html' %}
+{% block content %}
+{% if request.user.is_authenticated %}
+{% load static %}
+<!-- Page Content -->
+{% load crispy_forms_tags %}
+<!-- page content  -->
+      <div id="app-content">
+    
+        <!-- Container fluid -->
+        <div class="app-content-area">
+          <div class="container-fluid">
+              <div class="row mb-8  d-flex justify-content-center">  
+                <div class="col-xl-10 col-lg-10 col-md-8 col-10">
+                 {% if messages %}
+                    {% for message in messages %} 
+                      <div class="alert alert-primary alert-dismissible fade show" role="alert">
+                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-info-circle-fill me-2" viewBox="0 0 16 16">
+                          <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/>
+                        </svg>
+                        <strong>Information!</strong> {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                          <span aria-hidden="true"></span>
+                        </button>
+                      </div>
+                    {% endfor %}
+                  {% endif %}
+                  <!-- card -->
+                  <div class="card">
+                    <!-- card body -->
+                    <div class="card-body">
+                      <div class=" mb-6">
+                        <h4 class="mb-6">Modifier le compte utilisateur </h4>
+                          
+                        <form action="" method="post"  enctype="multipart/form-data">
+                         {% csrf_token %}
+
+                          <!-- row -->
+
+                          <div class="mb-3 row">
+                            <label for="fullName" class="col-sm-4 col-form-label
+                                form-label">Nom & prénom </label>
+                            <div class="col-sm-4 mb-3 mb-lg-0">
+                               {{ form.last_name|as_crispy_field }}
+                            </div>
+                            <div class="col-sm-4">
+                               {{ form.first_name|as_crispy_field }}
+                            </div>
+                          </div>
+
+                          <!-- row -->
+                          <div class="mb-3 row">
+                            <label for="email" class="col-sm-4 col-form-label
+                                form-label">Nom utilisateur</label>
+                            <div class="col-md-8 col-12">
+                             {{ form.username|as_crispy_field }}
+                            </div>
+                          </div>
+
+                          <div class="mb-3 row">
+                            <label for="fullName" class="col-sm-4 col-form-label
+                                form-label">Adresse électronique</label>
+                            <div class="col-sm-8 mb-3 mb-lg-0">
+                               {{ form.email|as_crispy_field }}
+                            </div>
+
+                          </div>
+
+                          
+                            <div class="offset-md-4 col-md-8 mt-8">
+                              <button type="submit" class="btn btn-primary"> Modifier </button>
+                            </div>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+                </div>
+              </div>
+            </div>
+      </div>
+
+
+
+
+
+
+
+
+
+{% else %}
+
+
+<!-- page content  -->
+      <div id="app-content">
+    
+        <!-- Container fluid -->
+        <div class="app-content-area">
+          <div class="container-fluid">
+              <div class="row mb-8  d-flex justify-content-center">  
+                <div class="col-xl-10 col-lg-10 col-md-8 col-10">
+                  <main class="">
+      <!-- row -->
+      <div class="">
+        <!-- col -->
+        <div class="">
+          <!-- content -->
+          <div class="text-center">
+            <!-- text -->
+            <img class="w-40 h-40" src="{% static 'assets/images/error/web-security.svg' %}" alt="Image" class="img-fluid">
+            <h1 class=" display-4 ">
+               Information de sécurité
+            </h1>
+            <p class="my-8">😟 Désolé cher personnel ou nouveau personnel {{ request.user }} ! Cette page n'est pas disponible pour vous.
+            <br> ⚠️Merci de nous comprendre !</p>
+            <!-- button -->
+          </div>
+        </div>
+      </div>
+    </main>
+                </div>
+              </div>
+          </div>
+        </div>
+      </div>
+{% endif %}
+
+
+{% endblock %}

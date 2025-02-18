@@ -1,0 +1,106 @@
+{% extends 'FMInvoice/layouts/default.html' %} {% block content %}
+<!-- Page Content -->
+{% load static %}
+<!-- page content -->
+      <div id="app-content">
+
+        <!-- Container fluid -->
+        <div class="app-content-area">
+          <div class="container-fluid">
+
+
+            <div class="row align-items-center">
+              <div class="col-xl-12 col-lg-12 col-md-12 col-12">
+                <!-- Bg -->
+                <div
+                  class="pt-20 rounded-top"
+                  style="
+                    background: url('/static/assets/images/background/profile-cover.jpg')
+                      no-repeat;
+                    background-size: cover;
+                  "
+                ></div>
+                <div class="card rounded-bottom rounded-0 smooth-shadow-sm mb-5">
+                  <div
+                    class="d-flex align-items-center justify-content-between pt-4 pb-6 px-4"
+                  >
+                    <div class="d-flex align-items-center">
+
+                      <!-- text -->
+                      <div class="lh-1">
+                        <h2 class="mb-0">
+                          {{request.user.first_name|default:"--"}} {{request.user.last_name|default:"--"}}
+                          
+                        </h2>
+                        <p class="mb-0 d-block">@{{request.user.username}}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- content -->
+            <div >
+              <!-- row -->
+              <div class="row">
+                <div class="col-xl-6 col-lg-12 col-md-12 col-12 mb-5">
+                  <!-- card -->
+                  <div class="card">
+                    <!-- card body -->
+                    <div class="card-header">
+                      <h4 class="mb-0">Informations personnelles</h4>
+                    </div>
+                    <div class="card-body">
+                      <!-- card title -->
+                      
+                      <!-- row -->
+                      <div class="row">
+                        <div class="col-6 mb-5">
+                          <!-- text -->
+                          <span class=" ">Adresse électronique</span>
+                          <h5 class="mb-0">{{request.user.email|default:"--"}}</h5>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-xl-6 col-lg-12 col-md-12 col-12 mb-5">
+                  <!-- card -->
+                  <div class="card">
+                    <!-- card body -->
+                    <div class="card-header">
+                      <h4 class="mb-0">Informations professionnelles</h4>
+                    </div>
+                    <div class="card-body">
+                      <!-- card title -->
+
+                      <!-- row -->
+                      <div class="row">
+                        <div class="col-6 mb-5">
+                          <span class="">Date de création du compte </span>
+                          <h5 class="">{{request.user.date_joined|date:"M d, Y"|default:"--"}}</h5>
+                        </div>
+                        <div class="col-6 ">
+                          <span class=" ">
+                            Status administrateur :
+                          </span>
+
+                          <h5 class="mb-5">{% if request.user.is_superuser == True %}Oui{% else %} Non {% endif %}</h5>
+                        </div>
+                        <div class="col-6">
+                          <span class=" ">Status employé :</span>
+                          <h5 class="mb-5">{% if request.user.is_staff == True %}Oui{% else %} Non {% endif %}</h5>
+                        </div>
+
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends 'FMInvoice/layouts/sign.html' %} {% block content %}
+<!-- Page Content -->
+{% load static %}
+
+<!-- Error page -->
+    <main class="container min-vh-100 d-flex justify-content-center
+      align-items-center">
+      <!-- row -->
+      <div class="row">
+        <!-- col -->
+        <div class="col-12">
+          <!-- content -->
+          <div class="text-center">
+            <!-- text -->
+            <img class="w-40 h-40" src="{% static 'assets/images/error/virtual-assistant.svg' %}" alt="Image" class="img-fluid">
+            <h1 class=" display-4 ">
+              Information d'assistance
+            </h1>
+            <p class="my-8">👏Félicitations pour votre inscription cher le nouvel employé {{ request.user.username }} ! Veuillez contacter l'administrateur (même si vous n'y travaillez plus) pour vous permettre l'accès.<br>
+            ⚠️Vous devez avoir des privilèges de admin ou de employee pour y accéder.</p>
+            <!-- button -->
+            <a href="{% url "employee_logout" %}" class="btn btn-primary">Se déconnecter</a>
+          </div>
+        </div>
+      </div>
+    </main>
+
+{% endblock %}
