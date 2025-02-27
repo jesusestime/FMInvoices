@@ -1,0 +1,41 @@
+{% extends 'FMInvoice/layouts/default.html' %}
+{% load crispy_forms_filters %}
+{% block content %}
+<div id="app-content">
+    <div class="app-content-area">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12 col-md-12 col-12">
+                    <div class="mb-5">
+                        <h3 class="mb-0">Modifier un Émetteur</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="">
+                        <div class="">
+                            <form method="post">
+                               {% csrf_token %}
+                            <!-- card -->
+                            <div class="card mb-4">
+                                <!-- card body -->
+                                <div class="card-body">
+                                    <div class="form-group">
+                                        {{ form|crispy }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="d-grid col-lg-12 col-12">
+                                <button type="submit" class="btn btn-primary">Modifier</button>
+                            </div>
+                            </form>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

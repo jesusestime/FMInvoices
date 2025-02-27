@@ -1,0 +1,114 @@
+{% extends 'FMInvoice/layouts/default.html' %}
+{% block content %}
+<div id="app-content">
+    <div class="app-content-area">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12 col-md-12 col-12">
+                    <div class="mb-5">
+                        {% if messages %}
+                            {% for message in messages %}
+                                <div class="alert alert-primary alert-dismissible fade show" role="alert">
+                                    <strong>Information!</strong> {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                        <h3 class="mb-0">Émetteurs</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header d-md-flex border-bottom-0">
+                            <div class="flex-grow-1">
+                                <a href="{% url 'emetteur_create' %}" class="btn btn-primary">+ Ajouter un Émetteur</a>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive table-card">
+                                <table id="example" class="table text-nowrap table-centered mt-0" style="width: 100%">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Nom Société</th>
+                                            <th>Type Société</th>
+                                            <th>Adresse</th>
+                                            <th>Téléphone</th>
+                                            <th>Email</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for emetteur in emetteurs %}
+                                            <tr>
+                                                <td>{{ emetteur.nom_societe }}</td>
+                                                <td>{{ emetteur.type_societe }}</td>
+                                                <td>{{ emetteur.adresse }}</td>
+                                                <td>{{ emetteur.telephone }}</td>
+                                                <td>{{ emetteur.email }}</td>
+                                                <td>
+                                                    <a href="{% url 'emetteur_edit' emetteur.id %}" class="btn btn-ghost btn-icon btn-sm rounded-circle texttooltip" data-template="editOne">
+                                                        <i data-feather="edit" class="icon-xs"></i>
+                                                        <div id="editOne" class="d-none">
+                                                            <span>Editer</span>
+                                                        </div>
+                                                    </a>
+                                                    <a onclick="return confirm('Souhaitez-vous supprimer cet émetteur ?')" href="{% url 'emetteur_delete' emetteur.id %}" class="btn btn-ghost btn-icon btn-sm rounded-circle texttooltip" data-template="trashOne">
+                                                        <i data-feather="trash-2" class="icon-xs"></i>
+                                                        <div id="trashOne" class="d-none">
+                                                            <span>Supprimer</span>
+                                                        </div>
+                                                    </a>
+                                                    <a href="#" onclick="showEmetteurDetail({{ emetteur.id }})" class="btn btn-ghost btn-icon btn-sm rounded-circle texttooltip" data-template="viewOne">
+                                                        <i data-feather="eye" class="icon-xs"></i>
+                                                        <div id="viewOne" class="d-none">
+                                                            <span>Voir les détails</span>
+                                                        </div>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <!-- Modal pour les détails de l'émetteur -->
+<div class="modal fade" id="emetteurDetailModal" tabindex="-1" aria-labelledby="emetteurDetailModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="emetteurDetailModalLabel">Détails de l'Émetteur</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" id="emetteurDetailContent">
+        <!-- Le contenu sera chargé ici via AJAX -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+function showEmetteurDetail(emetteurId) {
+    fetch(`/emetteur/detail/${emetteurId}/`)
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('emetteurDetailContent').innerHTML = data;
+            var myModal = new bootstrap.Modal(document.getElementById('emetteurDetailModal'), {});
+            myModal.show();
+        });
+}
+</script>
+
+{% endblock %}

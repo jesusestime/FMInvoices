@@ -1,0 +1,56 @@
+{% extends 'FMInvoice/layouts/default.html' %}
+{% load crispy_forms_filters %}
+{% block content %}
+{% load crispy_forms_tags %}
+<!-- Page Content -->
+<div id="app-content">
+    <!-- Container fluid -->
+    <div class="app-content-area">
+        <div class="container-fluid">
+            <div class="row">
+                {% if messages %}
+                            {% for message in messages %}
+                                <div class="alert alert-primary alert-dismissible fade show" role="alert">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-info-circle-fill me-2" viewBox="0 0 16 16">
+                                        <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/>
+                                    </svg>
+                                    <strong>Information!</strong> {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true"></span>
+                                    </button>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                <div class="col-lg-12 col-md-12 col-12 d-flex justify-content-center">
+                    <!-- Page header -->
+                    <div class="mb-5">
+                        <h3 class="mb-0">Ajouter un Service</h3>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <!-- row -->
+                <div class="row d-flex justify-content-center">
+                    <div class="col-lg-8 col-12">
+                        <form action="{% url 'service_create' %}" method="post">
+                            {% csrf_token %}
+                            <!-- card -->
+                            <div class="card mb-4">
+                                <!-- card body -->
+                                <div class="card-body">
+                                    <div class="form-group">
+                                        {{ form|crispy }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="d-grid col-lg-12 col-12">
+                                <button type="submit" class="btn btn-primary">Ajouter</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

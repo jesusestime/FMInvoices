@@ -1,4 +1,5 @@
-{% extends 'FMInvoice/layouts/default.html' %} {% block content %}
+{% extends 'FMInvoice/layouts/default.html' %}
+{% load crispy_forms_filters %} {% block content %}
 {% load crispy_forms_tags %}
 <!-- Page Content -->
         <div id="app-content">
@@ -29,7 +30,7 @@
                                   
                                     
                                         <div class="form-group">
-                                            {form|crispy}
+                                            {{ form|crispy }}
                                         </div>
                                         
                                   

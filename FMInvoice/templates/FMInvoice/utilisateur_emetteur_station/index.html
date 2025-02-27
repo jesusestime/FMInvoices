@@ -22,7 +22,7 @@
                                 </div>
                             {% endfor %}
                         {% endif %}
-                        <h3 class="mb-0">Utilisateurs</h3>
+                        <h3 class="mb-0">Utilisateurs Émetteurs Station</h3>
                     </div>
                 </div>
             </div>
@@ -33,7 +33,7 @@
                         <div class="card">
                             <div class="card-header d-md-flex border-bottom-0">
                                 <div class="flex-grow-1">
-                                    <a href="{% url 'user_register' %}" class="btn btn-primary">+ Ajouter un Utilisateur</a>
+                                    <a href="{% url 'utilisateur_emetteur_create' %}" class="btn btn-primary">+ Ajouter un Utilisateur Émetteur Station</a>
                                 </div>
                             </div>
                             <div class="card-body">
@@ -41,36 +41,28 @@
                                     <table id="example" class="table text-nowrap table-centered mt-0" style="width: 100%">
                                         <thead class="table-light">
                                             <tr>
-                                                <th>Nom d'utilisateur</th>
-                                                <th>Email</th>
-                                                <th>Prénom</th>
-                                                <th>Nom</th>
-                                                <th>Actif</th>
+                                                <th>Utilisateur</th>
+                                                <th>Stations</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {% for user in users %}
+                                            {% for utilisateur in utilisateurs_emetteurs %}
                                                 <tr>
-                                                    <td>{{ user.username }}</td>
-                                                    <td>{{ user.email }}</td>
-                                                    <td>{{ user.first_name }}</td>
-                                                    <td>{{ user.last_name }}</td>
-                                                    <td>{{ user.is_active|yesno:"Oui,Non" }}</td>
+                                                    <td>{{ utilisateur.utilisateur.username }}</td>
                                                     <td>
-                                                        <a href="{% url 'user_view' %}?id={{ user.id }}" class="btn btn-ghost btn-icon btn-sm rounded-circle texttooltip" data-template="viewOne">
-                                                            <i data-feather="eye" class="icon-xs"></i>
-                                                            <div id="viewOne" class="d-none">
-                                                                <span>Voir les détails</span>
-                                                            </div>
-                                                        </a>
-                                                        <a href="{% url 'user_update_profile' %}" class="btn btn-ghost btn-icon btn-sm rounded-circle texttooltip" data-template="editOne">
+                                                        {% for station in utilisateur.stations.all %}
+                                                            {{ station.nom }}{% if not forloop.last %}, {% endif %}
+                                                        {% endfor %}
+                                                    </td>
+                                                    <td>
+                                                        <a href="{% url 'utilisateur_emetteur_edit' utilisateur.id %}" class="btn btn-ghost btn-icon btn-sm rounded-circle texttooltip" data-template="editOne">
                                                             <i data-feather="edit" class="icon-xs"></i>
                                                             <div id="editOne" class="d-none">
                                                                 <span>Editer</span>
                                                             </div>
                                                         </a>
-                                                        <a onclick="return confirm('Souhaitez-vous supprimer cet utilisateur ?')" href="#" class="btn btn-ghost btn-icon btn-sm rounded-circle texttooltip" data-template="trashOne">
+                                                        <a onclick="return confirm('Souhaitez-vous supprimer cet utilisateur émetteur station ?')" href="{% url 'utilisateur_emetteur_delete' utilisateur.id %}" class="btn btn-ghost btn-icon btn-sm rounded-circle texttooltip" data-template="trashOne">
                                                             <i data-feather="trash-2" class="icon-xs"></i>
                                                             <div id="trashOne" class="d-none">
                                                                 <span>Supprimer</span>
@@ -90,35 +82,4 @@
         </div>
     </div>
 </div>
-
-<!-- Modal -->
-<div class="modal fade" id="userDetailModal" tabindex="-1" aria-labelledby="userDetailModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="userDetailModalLabel">Détails de l'Utilisateur</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body" id="userDetailContent">
-        <!-- Le contenu sera chargé ici via AJAX -->
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Script pour charger les détails de l'utilisateur via AJAX -->
-<script>
-function showUserDetail(userId) {
-    fetch(`/user/detail/${userId}/`)
-        .then(response => response.text())
-        .then(data => {
-            document.getElementById('userDetailContent').innerHTML = data;
-            var myModal = new bootstrap.Modal(document.getElementById('userDetailModal'), {});
-            myModal.show();
-        });
-}
-</script>
 {% endblock %}

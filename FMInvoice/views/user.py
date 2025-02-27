@@ -60,7 +60,7 @@ def password_change_view(request):
             user = form.save()
             update_session_auth_hash(request, user)  # Keep the user logged in
             messages.success(request, "Password changed successfully!")
-            return redirect("profile")
+            return redirect("user_view")
         else:
             messages.error(request, "There was an error changing your password. Please check the form.")
     else:
@@ -131,7 +131,7 @@ def profile_update_view(request):
         if form.is_valid():
             form.save()
             messages.success(request, "Profile updated successfully!")
-            return redirect("profile")
+            return redirect("user_view")
         else:
             messages.error(request, "There was an error updating your profile. Please check the form.")
     else:
@@ -142,4 +142,8 @@ def profile_update_view(request):
 
 
 
+@login_required
+def user_list_view(request):
+    users = User.objects.all().order_by('id')
 
+    return render(request, "FMInvoice/accounts/index.html", {"users": users})

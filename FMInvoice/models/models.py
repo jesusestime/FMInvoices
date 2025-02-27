@@ -1,4 +1,6 @@
-from django.db import models
+from django.utils import timezone
+
+from django.db import models, transaction
 from django.contrib.auth.models import User
 from django.utils.translation import gettext_lazy as _
 from django.utils.timezone import now
@@ -6,7 +8,7 @@ from django.utils.timezone import now
 
 # Modèle Station Radio Département
 class StationRadioDepartement(models.Model):
-    code = models.CharField(max_length=50, unique=True, verbose_name=_("Code Station Département"))
+    code = models.CharField(max_length=50,editable=False, unique=True, verbose_name=_("Code Station Département"))
     nom = models.CharField(max_length=255, verbose_name=_("Nom Station Département"))
     CATEGORIES = [
         ('TV', 'TV'),
@@ -14,6 +16,11 @@ class StationRadioDepartement(models.Model):
     ]
     categorie = models.CharField(max_length=10, choices=CATEGORIES, verbose_name=_("Catégorie"))
 
+    def save(self, *args, **kwargs):
+        if not self.code:
+            count = StationRadioDepartement.objects.count() + 1
+            self.code = f"Sta{count}"
+        super().save(*args, **kwargs)
     def __str__(self):
         return self.nom
 
@@ -72,30 +79,46 @@ class Emetteur(models.Model):
 
 # Modèle Catégorie Emission/Service
 class CategorieEmissionService(models.Model):
-    code = models.CharField(max_length=50, unique=True, verbose_name=_("Code Catégorie"))
+    code = models.CharField(max_length=50,editable=False, unique=True, verbose_name=_("Code Catégorie"))
     nom = models.CharField(max_length=255, verbose_name=_("Nom Catégorie"))
     station = models.ForeignKey(StationRadioDepartement, on_delete=models.CASCADE, verbose_name=_("Station Radio Département"))
 
+    def save(self, *args, **kwargs):
+        if not self.code:
+            count = CategorieEmissionService.objects.count() + 1
+            self.code = f"CaEm{count}"
+        super().save(*args, **kwargs)
     def __str__(self):
         return self.nom
 
 
-# Modèle Emission
 class Emission(models.Model):
-    code = models.CharField(max_length=50, unique=True, verbose_name=_("Code Émission"))
+    code = models.CharField(max_length=50, editable=False, unique=True, verbose_name=_("Code Émission"))
     nom = models.CharField(max_length=255, verbose_name=_("Nom Émission"))
-    categorie = models.ForeignKey(CategorieEmissionService, on_delete=models.CASCADE, verbose_name=_("Catégorie Emission/Service"))
+    categories = models.ManyToManyField(CategorieEmissionService, verbose_name=_("Catégories Emission/Service"))
+
+    def save(self, *args, **kwargs):
+        if not self.code:
+            count = Emission.objects.count() + 1
+            self.code = f"Emi{count}"
+        super().save(*args, **kwargs)
 
     def __str__(self):
-        return self.nom
+        return f"{self.nom} - {', '.join([cat.nom for cat in self.categories.all()])}"
 
 
 # Modèle Service
 class Service(models.Model):
-    code = models.CharField(max_length=50, unique=True, verbose_name=_("Code Service"))
+    code = models.CharField(editable=False, max_length=50, unique=True, verbose_name=_("Code Service"))
     nom = models.CharField(max_length=255, verbose_name=_("Nom Service"))
-    taille = models.PositiveIntegerField(default=1, verbose_name=_("Taille (en secondes)"))
-    categorie = models.ForeignKey(CategorieEmissionService, on_delete=models.CASCADE, verbose_name=_("Catégorie Emission/Service"))
+    taille = models.PositiveIntegerField(default=1, verbose_name=_("Unité(sec, mention, visit)"))
+    categorie = models.ManyToManyField('CategorieEmissionService', verbose_name=_("Catégorie Emission/Service"))
+
+    def save(self, *args, **kwargs):
+        if not self.code:
+            count = Service.objects.count() + 1
+            self.code = f"Ser{count}"
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.nom
@@ -174,7 +197,8 @@ class Facture(models.Model):
         ('Autre', 'Autre'),
     ]
 
-    numero = models.CharField(max_length=50, unique=True, verbose_name=_("Numéro Facture"))
+
+    numero = models.CharField(max_length=50, unique=True, verbose_name=_("Numéro Facture"), editable=False)
     emetteur = models.ForeignKey(Emetteur, on_delete=models.CASCADE, verbose_name=_("Émetteur"))
     client = models.ForeignKey(Client, on_delete=models.CASCADE, verbose_name=_("Client"))
     date_creation = models.DateTimeField(default=now, verbose_name=_("Date de Création"))
@@ -186,6 +210,22 @@ class Facture(models.Model):
     type_facture = models.CharField(max_length=20, choices=TYPE_FACTURE, verbose_name=_("Type Facture"))
     devise = models.CharField(max_length=20, choices=DEVISES, verbose_name=_("Devise"))
     lignes_commande = models.ManyToManyField(LigneCommande, verbose_name=_("Lignes de Commande"))
+    justificatif_description = models.TextField(blank=True, null=True,verbose_name=_("Justificatif/Description de la Facture"))
+
+    def save(self, *args, **kwargs):
+        # Vérifier si c'est une nouvelle facture (pas de numéro défini)
+        if not self.numero:
+            year = timezone.now().strftime('%y')  # Année sur 2 chiffres
+            # Utiliser une transaction pour éviter les doublons en cas d'accès concurrent
+            with transaction.atomic():
+                # Compter les factures existantes et incrémenter
+                count = Facture.objects.count() + 1
+                self.numero = f"BMG-{count:03d}/{year}"
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.numero
+
+    class Meta:
+        verbose_name = _("Facture")
+        verbose_name_plural = _("Factures")

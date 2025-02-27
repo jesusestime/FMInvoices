@@ -1,0 +1,43 @@
+{% extends 'FMInvoice/layouts/default.html' %}
+{% load crispy_forms_filters %}
+{% block content %}
+{% load crispy_forms_tags %}
+<!-- Page Content -->
+<div id="app-content">
+    <!-- Container fluid -->
+    <div class="app-content-area">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12 col-md-12 col-12 d-flex justify-content-center">
+                    <!-- Page header -->
+                    <div class="mb-5">
+                        <h3 class="mb-0">Ajouter un Utilisateur Émetteur Station</h3>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <!-- row -->
+                <div class="row d-flex justify-content-center">
+                    <div class="col-lg-8 col-12">
+                        <form action="{% url 'utilisateur_emetteur_create' %}" method="post">
+                            {% csrf_token %}
+                            <!-- card -->
+                            <div class="card mb-4">
+                                <!-- card body -->
+                                <div class="card-body">
+                                    <div class="form-group">
+                                        {{ form|crispy }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="d-grid col-lg-12 col-12">
+                                <button type="submit" class="btn btn-primary">Ajouter</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
