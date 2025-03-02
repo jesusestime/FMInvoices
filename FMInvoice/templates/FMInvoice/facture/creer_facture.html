@@ -1,0 +1,280 @@
+{% extends 'FMInvoice/layouts/default.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div id="app-content">
+    <div class="app-content-area">
+        <div class="container-fluid">
+            <h3 class="mb-4">Créer une Facture</h3>
+
+            <form method="post" id="facture-form">
+                {% csrf_token %}
+
+                <!-- Section Client -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5>Informations Client</h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                {{ facture_form.client|as_crispy_field }}
+                                <a href="{% url 'client_create' %}" target="_blank" class="btn btn-sm btn-primary mt-2">
+                                    Ajouter un Nouveau Client
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section Facture -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5>Détails Facture</h5>
+                        {{ facture_form.emetteur|as_crispy_field }}
+                        {{ facture_form.mode_paiement|as_crispy_field }}
+                        {{ facture_form.type_facture|as_crispy_field }}
+                        {{ facture_form.devise|as_crispy_field }}
+                        {{ facture_form.justificatif_description|as_crispy_field }}
+                    </div>
+                </div>
+
+                <!-- Section Lignes de Commande -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5>Lignes de Commande</h5>
+                        <div id="lignes-commande-list">
+                            <!-- Les lignes seront ajoutées dynamiquement ici -->
+                        </div>
+                        <button type="button" class="btn btn-secondary mt-2" data-bs-toggle="modal"
+                                data-bs-target="#addLigneCommandeModal">+ Ajouter une ligne</button>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Enregistrer la Facture</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal pour ajouter une ligne de commande -->
+<div class="modal fade" id="addLigneCommandeModal" tabindex="-1" aria-labelledby="addLigneCommandeModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addLigneCommandeModalLabel">Ajouter une Ligne de Commande</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div id="ligneCommandeForm">
+          <div class="mb-3">
+            <label for="serviceSelect" class="form-label">Service</label>
+            <select class="form-select" id="serviceSelect" name="service">
+              {% for service in services %}
+                <option value="{{ service.id }}">{{ service.nom }} ({{ service.code }}, {{ service.taille }})</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="prixUnitaire" class="form-label">Prix Unitaire</label>
+            <input type="number" class="form-control" id="prixUnitaire" name="prix_unitaire">
+          </div>
+          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#selectEmissionModal">
+            Sélectionner une émission et des dates
+          </button>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+        <button type="button" class="btn btn-primary" id="saveLigneCommande">Enregistrer</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal pour sélectionner une émission et des dates -->
+<div class="modal fade" id="selectEmissionModal" tabindex="-1" aria-labelledby="selectEmissionModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="selectEmissionModalLabel">Sélectionner une émission et des dates</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="emissionDateForm">
+          <div class="mb-3">
+            <label for="emissionSelect" class="form-label">Émission</label>
+            <select class="form-select" id="emissionSelect" name="emission">
+              <option value="" disabled selected>Sélectionnez une émission</option>
+              {% for emission in emissions %}
+                <option value="{{ emission.id }}">{{ emission.nom }} ({{ emission.code }})</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="dateSelect" class="form-label">Dates</label>
+            <input type="date" class="form-control" id="dateSelect" name="dates" multiple>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+        <button type="button" class="btn btn-primary" id="addEmissionDate">Ajouter</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Scripts -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialiser Flatpickr
+    const datePicker = flatpickr("#dateSelect", {
+        mode: "multiple",
+        dateFormat: "Y-m-d",
+        inline: false,
+        onClose: function(selectedDates, dateStr, instance) {
+            document.getElementById('dateSelect').value = dateStr;
+        }
+    });
+
+    // Éléments du DOM
+    const addEmissionDateButton = document.getElementById('addEmissionDate');
+    const emissionSelect = document.getElementById('emissionSelect');
+    const serviceSelect = document.getElementById('serviceSelect');
+    const lignesCommandeList = document.getElementById('lignes-commande-list');
+    const selectEmissionButton = document.querySelector('button[data-bs-target="#selectEmissionModal"]');
+    const saveLigneCommandeButton = document.getElementById('saveLigneCommande');
+    const addLigneCommandeModal = document.getElementById('addLigneCommandeModal');
+    const selectEmissionModal = document.getElementById('selectEmissionModal');
+    const factureForm = document.getElementById('facture-form');
+    const submitFactureButton = document.querySelector('#facture-form button[type="submit"]');
+
+    // Objet pour stocker les données temporairement
+    let currentLigneData = null;
+
+    // Fonction pour nettoyer les overlays et réinitialiser le body
+    function cleanModalState() {
+        document.querySelectorAll('.modal-backdrop').forEach(backdrop => backdrop.remove());
+        document.body.classList.remove('modal-open');
+        document.body.style = '';
+    }
+
+    // Gérer l'ajout des émissions et des dates
+    addEmissionDateButton.addEventListener('click', function() {
+        // Récupérer les valeurs
+        const emissionId = emissionSelect.value;
+        const emissionName = emissionSelect.options[emissionSelect.selectedIndex]?.text || '';
+        const serviceId = serviceSelect.value;
+        const serviceName = serviceSelect.options[serviceSelect.selectedIndex]?.text || '';
+        const dates = datePicker.selectedDates.map(date => date.toISOString().split('T')[0]);
+        const prixUnitaire = document.getElementById('prixUnitaire')?.value || '';
+
+        // Débogage
+        console.log('emissionId:', emissionId);
+        console.log('serviceId:', serviceId);
+        console.log('dates:', dates);
+        console.log('prixUnitaire:', prixUnitaire);
+
+        // Vérifier que les données sont valides
+        if (!emissionId || !serviceId || dates.length === 0 || !prixUnitaire) {
+            alert('Veuillez sélectionner un service, une émission, des dates et un prix unitaire.');
+            return;
+        }
+
+        // Initialiser ou mettre à jour currentLigneData
+        if (!currentLigneData || currentLigneData.serviceId !== serviceId || currentLigneData.prixUnitaire !== prixUnitaire) {
+            currentLigneData = {
+                serviceId,
+                serviceName,
+                prixUnitaire,
+                emissions: []
+            };
+        }
+
+        // Ajouter la nouvelle combinaison émission/dates
+        currentLigneData.emissions.push({ emissionId, emissionName, dates });
+
+        // Mettre à jour l'affichage et le champ caché
+        let existingInput = factureForm.querySelector(`input[data-service-id="${serviceId}"]`);
+        let ligneDiv = lignesCommandeList.querySelector(`.ligne-commande[data-service-id="${serviceId}"]`);
+
+        // Générer la valeur pour le champ caché
+        const emissionsStr = currentLigneData.emissions.map(e => `${e.emissionId}:${e.dates.join(',')}`).join(';');
+        const inputValue = `${serviceId};${emissionsStr};${prixUnitaire}`;
+
+        if (!existingInput) {
+            // Créer un nouveau champ caché et une nouvelle ligne
+            existingInput = document.createElement('input');
+            existingInput.type = 'hidden';
+            existingInput.name = 'lignes_commande[]';
+            existingInput.dataset.serviceId = serviceId;
+            factureForm.appendChild(existingInput);
+
+            ligneDiv = document.createElement('div');
+            ligneDiv.className = 'ligne-commande mb-2';
+            ligneDiv.dataset.serviceId = serviceId;
+            lignesCommandeList.appendChild(ligneDiv);
+
+            // Ajouter un bouton de suppression
+            const removeButton = document.createElement('button');
+            removeButton.type = 'button';
+            removeButton.className = 'btn btn-danger btn-sm remove-ligne';
+            removeButton.textContent = 'Supprimer';
+            removeButton.addEventListener('click', function() {
+                ligneDiv.remove();
+                existingInput.remove();
+                currentLigneData = null;
+            });
+            ligneDiv.appendChild(removeButton);
+        }
+
+        // Mettre à jour le champ caché
+        existingInput.value = inputValue;
+
+        // Mettre à jour l'affichage
+        const emissionsDisplay = currentLigneData.emissions.map(e =>
+            `<strong>Émission :</strong> ${e.emissionName}, <strong>Dates :</strong> ${e.dates.join(', ')}`
+        ).join(' | ');
+        ligneDiv.innerHTML = `
+            <p><strong>Service :</strong> ${serviceName} | ${emissionsDisplay} | <strong>Prix unitaire :</strong> ${prixUnitaire}</p>
+        `;
+        ligneDiv.appendChild(ligneDiv.querySelector('.remove-ligne'));
+
+        // Fermer le modal d'émission et déplacer le focus
+        const emissionModalInstance = bootstrap.Modal.getInstance(selectEmissionModal);
+        emissionModalInstance.hide();
+        cleanModalState();
+        selectEmissionButton.focus(); // Retourner le focus au bouton du modal parent
+
+        // Réinitialiser pour une nouvelle combinaison
+        datePicker.clear();
+        emissionSelect.selectedIndex = 0;
+    });
+
+    // Gérer la fermeture complète de #addLigneCommandeModal
+    saveLigneCommandeButton.addEventListener('click', function() {
+        const ligneCommandeModalInstance = bootstrap.Modal.getInstance(addLigneCommandeModal);
+        ligneCommandeModalInstance.hide();
+        cleanModalState();
+        currentLigneData = null;
+        submitFactureButton.focus(); // Déplacer le focus vers "Enregistrer la Facture"
+    });
+
+    // Réinitialiser le modal d'émission à chaque ouverture
+    selectEmissionModal.addEventListener('show.bs.modal', function() {
+        datePicker.clear();
+        emissionSelect.selectedIndex = 0;
+    });
+
+    // Nettoyer les overlays lors de la fermeture manuelle
+    [addLigneCommandeModal, selectEmissionModal].forEach(modal => {
+        modal.addEventListener('hidden.bs.modal', cleanModalState);
+    });
+});
+</script>
+
+{% endblock %}

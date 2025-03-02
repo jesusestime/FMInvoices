@@ -1,0 +1,98 @@
+{% extends 'FMInvoice/layouts/default.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div id="app-content">
+    <div class="app-content-area">
+        <div class="container-fluid">
+            <h3 class="mb-4">Modifier la Facture #{{ facture.numero }}</h3>
+
+            <form method="post" id="facture-form">
+                {% csrf_token %}
+
+                <!-- Section Client -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5>Informations Client</h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                {{ facture_form.client|as_crispy_field }}
+                                <a href="{% url 'client_create' %}" target="_blank" class="btn btn-sm btn-primary mt-2">
+                                    Ajouter un Nouveau Client
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section Facture -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5>Détails Facture</h5>
+                        {{ facture_form.emetteur|as_crispy_field }}
+                        {{ facture_form.mode_paiement|as_crispy_field }}
+                        {{ facture_form.type_facture|as_crispy_field }}
+                        {{ facture_form.devise|as_crispy_field }}
+                        {{ facture_form.justificatif_description|as_crispy_field }}
+                    </div>
+                </div>
+
+                <!-- Section Lignes de Commande -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5>Lignes de Commande</h5>
+                        <div id="lignes-commande-list">
+                            {% for ligne in facture.lignes_commande.all %}
+                                {% with emissions=ligne.emission_date_emission.all %}
+                                    <div class="ligne-commande mb-2" data-service-id="{{ ligne.service.id }}">
+                                        <p>
+                                            <strong>Service :</strong> {{ ligne.service.nom }} |
+                                            <strong>Émissions :</strong>
+                                            {% for emission_date in emissions %}
+                                                {{ emission_date.emission.nom }}, Dates [{{ emission_date.date_emission.all|join:", " }}]
+                                                {% if not forloop.last %} | {% endif %}
+                                            {% endfor %} |
+                                            <strong>Prix unitaire :</strong> {{ ligne.prix_unitaire }}
+                                        </p>
+{#                                        <button type="button" class="btn btn-danger btn-sm remove-ligne">Supprimer</button>#}
+                                        <input type="hidden" name="lignes_commande[]" data-service-id="{{ ligne.service.id }}"
+                                               value="{{ ligne.service.id }};{% for ed in emissions %}{{ ed.emission.id }}:{{ ed.date_emission.all|join:',' }}{% if not forloop.last %};{% endif %}{% endfor %};{{ ligne.prix_unitaire }}">
+                                    </div>
+                                {% endwith %}
+                            {% endfor %}
+                        </div>
+{#                        <button type="button" class="btn btn-secondary mt-2" data-bs-toggle="modal"#}
+{#                                data-bs-target="#addLigneCommandeModal">+ Ajouter une ligne</button>#}
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Enregistrer les Modifications</button>
+                <a href="{% url 'facture_detail' facture.id %}" class="btn btn-secondary">Annuler</a>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal pour ajouter une ligne de commande -->
+<div class="modal fade" id="addLigneCommandeModal" tabindex="-1" aria-labelledby="addLigneCommandeModalLabel" aria-hidden="true">
+    <!-- Contenu identique au template de création -->
+    <!-- Copiez le modal depuis creer_facture.html -->
+</div>
+
+<!-- Modal pour sélectionner une émission et des dates -->
+<div class="modal fade" id="selectEmissionModal" tabindex="-1" aria-labelledby="selectEmissionModalLabel" aria-hidden="true">
+    <!-- Contenu identique au template de création -->
+    <!-- Copiez le modal depuis creer_facture.html -->
+</div>
+
+<!-- Scripts -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+<script>
+    // Copiez le script JavaScript depuis creer_facture.html
+    // Il fonctionnera de la même manière ici
+</script>
+{% endblock %}

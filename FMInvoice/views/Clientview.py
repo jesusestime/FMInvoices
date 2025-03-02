@@ -15,18 +15,41 @@ def index(request):
         {'clients': clients}
     )
 
+from django.http import JsonResponse
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from FMInvoice.models import Client
+from FMInvoice.forms import ClientForm
+from django.contrib import messages
+
 @login_required
 def create(request):
     if request.method == 'POST':
         form = ClientForm(request.POST)
         if form.is_valid():
             try:
-                form.save()
+                client = form.save()
+                if request.headers.get('x-requested-with') == 'XMLHttpRequest':  # Vérifier si c'est une requête AJAX
+                    return JsonResponse({
+                        'success': True,
+                        'client_id': client.id,
+                        'client_name': str(client),
+                    })
                 messages.success(request, "Le client a été ajouté avec succès !")
                 return redirect('/client')
             except ValueError as e:
+                if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+                    return JsonResponse({
+                        'success': False,
+                        'errors': str(e),
+                    }, status=400)
                 messages.error(request, str(e))
         else:
+            if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+                return JsonResponse({
+                    'success': False,
+                    'errors': form.errors.as_json(),
+                }, status=400)
             messages.error(request, "Une erreur s'est produite. Veuillez réessayer !")
     else:
         form = ClientForm()

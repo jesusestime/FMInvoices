@@ -1,0 +1,89 @@
+{% extends 'FMInvoice/layouts/default.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div id="app-content">
+    <div class="app-content-area">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12 col-md-12 col-12">
+                    <h3 class="mb-4">Détails de la Facture #{{ facture.numero }}</h3>
+
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <!-- Informations Facture -->
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h5>Informations Générales</h5>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p><strong>Émetteur:</strong> {{ facture.emetteur.nom_societe }}</p>
+                                    <p><strong>Client:</strong> {{ facture.client.nom }}</p>
+                                    <p><strong>Date de Création:</strong> {{ facture.date_creation|date:"d/m/Y H:i" }}</p>
+                                    <p><strong>Date de Mise à Jour:</strong> {{ facture.date_mise_a_jour|date:"d/m/Y H:i" }}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p><strong>Statut Validité:</strong> {{ facture.statut_validite }}</p>
+                                    <p><strong>Mode de Paiement:</strong> {{ facture.mode_paiement }}</p>
+                                    <p><strong>Type Facture:</strong> {{ facture.type_facture }}</p>
+                                    <p><strong>Devise:</strong> {{ facture.devise }}</p>
+                                </div>
+                            </div>
+                            <p><strong>Description:</strong> {{ facture.justificatif_description|default:"Aucune" }}</p>
+                        </div>
+                    </div>
+
+                    <!-- Lignes de Commande -->
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h5>Lignes de Commande</h5>
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Service</th>
+                                        <th>Émissions et Dates</th>
+                                        <th>Prix Unitaire</th>
+                                        <th>Prix Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for ligne in lignes_commande %}
+                                        <tr>
+                                            <td>{{ ligne.service.nom }}</td>
+                                            <td>
+                                                {% for emission_date in ligne.emission_date_emission.all %}
+                                                    {{ emission_date.emission.nom }}, Dates [{{ emission_date.date_emission.all|join:", " }}]
+                                                    {% if not forloop.last %} | {% endif %}
+                                                {% endfor %}
+                                            </td>
+                                            <td>{{ ligne.prix_unitaire }}</td>
+                                            <td>{{ ligne.prix_total }}</td>
+                                        </tr>
+                                    {% empty %}
+                                        <tr>
+                                            <td colspan="4">Aucune ligne de commande associée.</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Boutons d'action -->
+                    <div class="d-flex justify-content-end">
+                        <a href="{% url 'creer_facture' %}" class="btn btn-secondary me-2">Retour</a>
+                        <!-- Vous pouvez ajouter d'autres actions comme modifier ou supprimer -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

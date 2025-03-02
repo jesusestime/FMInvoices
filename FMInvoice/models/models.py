@@ -121,7 +121,7 @@ class Service(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return self.nom
+        return f"{self.nom} ({self.taille})"
 
 class DateEmission(models.Model):
     date = models.DateField(verbose_name=_("Date de l'émission"))
@@ -212,6 +212,9 @@ class Facture(models.Model):
     lignes_commande = models.ManyToManyField(LigneCommande, verbose_name=_("Lignes de Commande"))
     justificatif_description = models.TextField(blank=True, null=True,verbose_name=_("Justificatif/Description de la Facture"))
 
+    def get_montant_total(self):
+        """Calcule le montant total de toutes les lignes de commande."""
+        return sum(ligne.prix_total or 0 for ligne in self.lignes_commande.all())
     def save(self, *args, **kwargs):
         # Vérifier si c'est une nouvelle facture (pas de numéro défini)
         if not self.numero:

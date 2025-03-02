@@ -6,3 +6,4 @@ from  .Emetteur import EmetteurForm
 from .CategorieEmissionService import CategorieEmissionServiceForm
 from .Service import ServiceForm
 from .Emission import EmissionForm
+from .Facture import *

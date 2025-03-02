@@ -9,7 +9,7 @@ from FMInvoice.views import (
     profile_update_view,
     user_activation_view,
     password_change_view,user_list_view,
-    StationRadioDepartementview, UtilisateurEmetteurStationview,home,Clientview,Emetteurview,CategorieEmissionServiceView,EmissionView,ServiceView
+    StationRadioDepartementview, UtilisateurEmetteurStationview,home,Clientview,Emetteurview,CategorieEmissionServiceView,EmissionView,ServiceView,factureView
 )
 
 urlpatterns = [
@@ -86,4 +86,11 @@ urlpatterns = [
     path("service/create/", ServiceView.service_create, name='service_create'),
     path("service/edit/<int:id>/", ServiceView.service_edit, name='service_edit'),
     path("service/delete/<int:id>/", ServiceView.service_delete, name='service_delete'),
+
+
+
+    path("facture/creer/", factureView.creer_facture, name="creer_facture"),
+    path("facture/list/", factureView.facture_list, name="facture_list"),
+    path("facture/edit/<int:id>/", factureView.facture_edit, name="facture_edit"),
+    path("facture/detail/<int:id>/", factureView.facture_detail, name="facture_detail"),
 ]

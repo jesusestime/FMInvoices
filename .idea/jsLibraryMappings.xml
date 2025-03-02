@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="JavaScriptLibraryMappings">
-    <file url="file://$PROJECT_DIR$" libraries="{@popperjs, @popperjs/core, MaterialDesign-Webfont, alertify, bootstrap, dataTables, dataTables.bootstrap5, feather-icons, jquery, jquery-3.7.1, jquery.dataTables, select2, simplebar, twitter-bootstrap}" />
+    <file url="file://$PROJECT_DIR$" libraries="{@popperjs, @popperjs/core, MaterialDesign-Webfont, alertify, bootstrap, dataTables, dataTables.bootstrap5, feather-icons, flatpickr, jquery, jquery-3.6.0, jquery-3.7.1, jquery.dataTables, select2, simplebar, twitter-bootstrap}" />
   </component>
 </project>

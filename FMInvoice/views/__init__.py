@@ -7,3 +7,4 @@ from .Emetteurview import *
 from .EmissionView import *
 from .CategorieEmissionServiceView import *
 from .ServiceView import *
+from .factureView import *
