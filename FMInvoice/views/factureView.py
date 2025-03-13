@@ -1,3 +1,5 @@
+import hashlib
+
 from django.db.models import Sum
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
@@ -179,3 +181,57 @@ def facture_edit(request, id):
         'services': Service.objects.all(),
         'emissions': Emission.objects.all(),
     })
+
+
+from django.shortcuts import get_object_or_404, render
+from django.contrib.auth.decorators import login_required
+import qrcode
+from io import BytesIO
+from django.http import HttpResponse
+import base64
+
+from num2words import num2words
+
+
+@login_required
+def facture_print(request, id):
+    facture = get_object_or_404(Facture, id=id)
+    lignes_commande = facture.lignes_commande.all()
+
+    # QR code data (inchangé)
+    qr_data = (
+        f"Facture N°: {facture.numero}\n"
+        f"Date création: {facture.date_creation}\n"
+        f"Date mise à jour: {facture.date_mise_a_jour}\n"
+        f"Statut: {facture.statut_validite}\n"
+        f"Mode paiement: {facture.mode_paiement}\n"
+        f"Type: {facture.type_facture}\n"
+        f"Devise: {facture.devise}\n"
+        f"Montant: {facture.get_montant_total()} {facture.devise}\n"
+        f"Client: {facture.client.nom}\n"
+        f"Émetteur: {facture.emetteur.nom_societe}\n"
+        f"ID: {hashlib.md5(str(facture.id).encode()).hexdigest()}"
+    )
+
+    qr = qrcode.QRCode(version=1, box_size=10, border=4)
+    qr.add_data(qr_data)
+    qr.make(fit=True)
+    qr_img = qr.make_image(fill_color="black", back_color="white")
+
+    buffer = BytesIO()
+    qr_img.save(buffer, format="PNG")
+    qr_img_base64 = base64.b64encode(buffer.getvalue()).decode('utf-8')
+    buffer.close()
+
+    # Conversion du montant en lettres
+    total_in_words = num2words(facture.get_montant_total(), lang='fr')
+
+    context = {
+        'facture': facture,
+        'lignes_commande': lignes_commande,
+        'qr_code': qr_img_base64,
+        'total': facture.get_montant_total(),
+        'total_in_words': total_in_words,
+    }
+
+    return render(request, 'FMInvoice/facture/facture_print.html', context)

@@ -72,7 +72,15 @@
             <!-- Nav item: Message Categories -->
             <li class="nav-item">
                 <a class="nav-link has-arrow {% if url_name == 'categorie_emission_service_index' %} active {% endif %}" href="{% url 'categorie_emission_service_index' %}">
-                    <i data-feather="tag" class="nav-icon me-2 icon-xxs"></i> Catégories des Messages
+                    <i data-feather="tag" class="nav-icon me-2 icon-xxs"></i> Catégories d'Émi/Serv
+                </a>
+            </li>
+
+
+            <!-- Nav item: Invoices -->
+            <li class="nav-item">
+                <a class="nav-link has-arrow {% if url_name == 'facture_list' %} active {% endif %}" href="{% url 'facture_list' %}">
+                    <i data-feather="file-text" class="nav-icon me-2 icon-xxs"></i> Liste des Factures
                 </a>
             </li>
             {% endif %}

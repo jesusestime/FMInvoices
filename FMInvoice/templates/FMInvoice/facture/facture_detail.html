@@ -36,7 +36,8 @@
                                     <p><strong>Devise:</strong> {{ facture.devise }}</p>
                                 </div>
                             </div>
-                            <p><strong>Description:</strong> {{ facture.justificatif_description|default:"Aucune" }}</p>
+                            <p><strong>Justificatif payement/Description de la Facture:</strong> {{ facture.justificatif_description|default:"Aucune" }}</p>
+                            <p><strong>Termes et conditions de la Facture</strong> {{ facture.termesetcondition|default:"Aucune" }}</p>
                         </div>
                     </div>
 
@@ -79,7 +80,7 @@
                     <!-- Boutons d'action -->
                     <div class="d-flex justify-content-end">
                         <a href="{% url 'creer_facture' %}" class="btn btn-secondary me-2">Retour</a>
-                        <!-- Vous pouvez ajouter d'autres actions comme modifier ou supprimer -->
+                        <a href="{% url 'facture_print' facture.id %}" class="btn btn-primary me-2" target="_blank">Imprimer</a>
                     </div>
                 </div>
             </div>

@@ -31,9 +31,11 @@
                         <h5>Détails Facture</h5>
                         {{ facture_form.emetteur|as_crispy_field }}
                         {{ facture_form.mode_paiement|as_crispy_field }}
+                        {{ facture_form.statut_validite|as_crispy_field }}
                         {{ facture_form.type_facture|as_crispy_field }}
                         {{ facture_form.devise|as_crispy_field }}
                         {{ facture_form.justificatif_description|as_crispy_field }}
+                        {{ facture_form.termesetcondition|as_crispy_field }}
                     </div>
                 </div>
 

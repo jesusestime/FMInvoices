@@ -14,10 +14,9 @@
             <!-- text -->
             <img class="w-40 h-40" src="{% static 'assets/images/error/web-security.svg' %}" alt="Image" class="img-fluid">
             <h1 class=" display-4 ">
-               Information de sécurité
+               Accès Refusé
             </h1>
-            <p class="my-8">😟 Désolé cher personnel ou nouveau personnel {{ request.user }} ! Veuillez contacter l'administrateur (même si vous n'y travaillez plus) pour vous permettre l'accès.
-            <br> ⚠️Vous devez avoir des privilèges de superutilisateur pour y accéder.</p>
+            <p class="my-8">Vous n'avez pas les permissions nécessaires pour accéder à cette page.</p>
             <!-- button -->
             <a href="{% url "index" %}" class="btn btn-primary">Retour sur la page d'accueil</a>
           </div>

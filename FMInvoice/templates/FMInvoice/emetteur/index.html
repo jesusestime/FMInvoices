@@ -35,6 +35,7 @@
                                             <th>Type Société</th>
                                             <th>Adresse</th>
                                             <th>Téléphone</th>
+                                            <th>Station</th>
                                             <th>Email</th>
                                             <th>Action</th>
                                         </tr>
@@ -46,6 +47,7 @@
                                                 <td>{{ emetteur.type_societe }}</td>
                                                 <td>{{ emetteur.adresse }}</td>
                                                 <td>{{ emetteur.telephone }}</td>
+                                                <td>{{ emetteur.station }}</td>
                                                 <td>{{ emetteur.email }}</td>
                                                 <td>
                                                     <a href="{% url 'emetteur_edit' emetteur.id %}" class="btn btn-ghost btn-icon btn-sm rounded-circle texttooltip" data-template="editOne">

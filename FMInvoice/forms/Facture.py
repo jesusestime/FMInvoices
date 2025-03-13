@@ -5,13 +5,18 @@ from FMInvoice.models import Facture, Client, Emetteur
 class FactureForm(forms.ModelForm):
     class Meta:
         model = Facture
-        fields = ['emetteur', 'client', 'mode_paiement', 'type_facture', 'devise', 'justificatif_description']
+        fields = ['emetteur', 'client','statut_validite', 'mode_paiement', 'type_facture', 'devise', 'justificatif_description','termesetcondition']
 
     def __init__(self, *args, **kwargs):
         emetteurs = kwargs.pop('emetteurs', None)
         super().__init__(*args, **kwargs)
         if emetteurs:
             self.fields['emetteur'].queryset = emetteurs
+            # Personnaliser les labels des choix pour inclure le nom de la station
+            self.fields['emetteur'].choices = [
+                (emetteur.id, f"{emetteur.nom_societe} ({emetteur.station.nom})")
+                for emetteur in emetteurs
+            ]
 
 
 class ClientForm(forms.ModelForm):

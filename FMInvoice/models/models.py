@@ -13,8 +13,9 @@ class StationRadioDepartement(models.Model):
     CATEGORIES = [
         ('TV', 'TV'),
         ('Radio', 'Radio'),
+        ('Social media', 'Social media'),
     ]
-    categorie = models.CharField(max_length=10, choices=CATEGORIES, verbose_name=_("Catégorie"))
+    categorie = models.CharField(max_length=30, choices=CATEGORIES, verbose_name=_("Catégorie"))
 
     def save(self, *args, **kwargs):
         if not self.code:
@@ -27,7 +28,7 @@ class StationRadioDepartement(models.Model):
 
 # Modèle Utilisateur Émetteur Station
 class UtilisateurEmetteurStation(models.Model):
-    utilisateur = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name=_("Utilisateur"))
+    utilisateur = models.OneToOneField(User, on_delete=models.PROTECT, verbose_name=_("Utilisateur"))
     stations = models.ManyToManyField(StationRadioDepartement, verbose_name=_("Stations où il travaille"))
 
     def __str__(self):
@@ -67,11 +68,14 @@ class Emetteur(models.Model):
     type_societe = models.CharField(max_length=255, verbose_name=_("Type Société"))
     adresse = models.CharField(max_length=255, verbose_name=_("Adresse Société"))
     telephone = models.CharField(max_length=20, verbose_name=_("Téléphone"))
+    forme_juridique = models.CharField(max_length=30, verbose_name=_("Forme juridique"))
+    secteur= models.CharField(max_length=255, verbose_name=_("Secteur d'activités"))
+    centre = models.CharField(max_length=255, verbose_name=_("Centre Fiscal"))
     email = models.EmailField(verbose_name=_("Email"))
     nif = models.CharField(max_length=50, verbose_name=_("NIF"))
     registre_commerce = models.CharField(max_length=50, verbose_name=_("Registre de Commerce"))
     assujetti_tva = models.BooleanField(default=False, verbose_name=_("Assujetti à la TVA"))
-    station = models.ForeignKey(StationRadioDepartement, on_delete=models.CASCADE, verbose_name=_("Station Radio Département"))
+    station = models.ForeignKey(StationRadioDepartement,on_delete=models.PROTECT, verbose_name=_("Station Radio Département"))
 
     def __str__(self):
         return self.nom_societe
@@ -81,7 +85,7 @@ class Emetteur(models.Model):
 class CategorieEmissionService(models.Model):
     code = models.CharField(max_length=50,editable=False, unique=True, verbose_name=_("Code Catégorie"))
     nom = models.CharField(max_length=255, verbose_name=_("Nom Catégorie"))
-    station = models.ForeignKey(StationRadioDepartement, on_delete=models.CASCADE, verbose_name=_("Station Radio Département"))
+    station = models.ForeignKey(StationRadioDepartement, on_delete=models.PROTECT, verbose_name=_("Station Radio Département"))
 
     def save(self, *args, **kwargs):
         if not self.code:
@@ -89,7 +93,7 @@ class CategorieEmissionService(models.Model):
             self.code = f"CaEm{count}"
         super().save(*args, **kwargs)
     def __str__(self):
-        return self.nom
+        return f"{self.nom} ({self.station})"
 
 
 class Emission(models.Model):
@@ -131,7 +135,7 @@ class DateEmission(models.Model):
 
 # Table intermédiaire Emission_DateEmission
 class EmissionDateEmission(models.Model):
-    emission = models.ForeignKey(Emission, on_delete=models.CASCADE, verbose_name=_("Émission"))
+    emission = models.ForeignKey(Emission,on_delete=models.PROTECT, verbose_name=_("Émission"))
     date_emission =  models.ManyToManyField('DateEmission', verbose_name=_("Dates de l'émission"))
 
     def __str__(self):
@@ -141,7 +145,7 @@ class EmissionDateEmission(models.Model):
 
 # Modèle Ligne Commande
 class LigneCommande(models.Model):
-    service = models.ForeignKey(Service, on_delete=models.CASCADE, verbose_name=_("Service"))
+    service = models.ForeignKey(Service, on_delete=models.PROTECT, verbose_name=_("Service"))
     emission_date_emission = models.ManyToManyField(EmissionDateEmission, verbose_name=_("Émission/Date Émission"))
     prix_unitaire = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_("Prix Unitaire"))
     prix_total = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_("Prix Total"), null=True,editable=False)
@@ -199,18 +203,20 @@ class Facture(models.Model):
 
 
     numero = models.CharField(max_length=50, unique=True, verbose_name=_("Numéro Facture"), editable=False)
-    emetteur = models.ForeignKey(Emetteur, on_delete=models.CASCADE, verbose_name=_("Émetteur"))
-    client = models.ForeignKey(Client, on_delete=models.CASCADE, verbose_name=_("Client"))
+    emetteur = models.ForeignKey(Emetteur, on_delete=models.PROTECT, verbose_name=_("Émetteur"))
+    client = models.ForeignKey(Client, on_delete=models.PROTECT, verbose_name=_("Client"))
     date_creation = models.DateTimeField(default=now, verbose_name=_("Date de Création"))
     date_mise_a_jour = models.DateTimeField(auto_now=True, verbose_name=_("Date de Mise à Jour"))
     statut_validite = models.CharField(max_length=10, choices=STATUT_VALIDITE, default='Valide', verbose_name=_("Statut Validité"))
     statut_visibilite = models.CharField(max_length=3, choices=STATUT_VISIBILITE, default='Oui', verbose_name=_("Statut Visibilité"))
-    emetteur_createur = models.ForeignKey(UtilisateurEmetteurStation, on_delete=models.CASCADE, verbose_name=_("Émetteur Créateur"))
+    emetteur_createur = models.ForeignKey(UtilisateurEmetteurStation, on_delete=models.PROTECT, verbose_name=_("Émetteur Créateur"))
     mode_paiement = models.CharField(max_length=20, choices=MODE_PAIEMENT, verbose_name=_("Mode de Paiement"))
     type_facture = models.CharField(max_length=20, choices=TYPE_FACTURE, verbose_name=_("Type Facture"))
     devise = models.CharField(max_length=20, choices=DEVISES, verbose_name=_("Devise"))
     lignes_commande = models.ManyToManyField(LigneCommande, verbose_name=_("Lignes de Commande"))
-    justificatif_description = models.TextField(blank=True, null=True,verbose_name=_("Justificatif/Description de la Facture"))
+    justificatif_description = models.TextField(blank=True, null=True,verbose_name=_("Justificatif payement/Description de la Facture"))
+    termesetcondition = models.TextField(blank=True, null=True,
+    verbose_name=_("Termes et conditions de la Facture"))
 
     def get_montant_total(self):
         """Calcule le montant total de toutes les lignes de commande."""
