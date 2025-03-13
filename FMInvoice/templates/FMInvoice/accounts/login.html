@@ -1,77 +1,99 @@
-{% extends 'FMInvoice/layouts/sign.html' %} {% block content %}
+{% extends 'FMInvoice/layouts/sign.html' %}
+{% block content %}
 <!-- Page Content -->
 {% load static %}
 {% load crispy_forms_tags %}
 <style>
+/* Container styling with repeating SVG background and gradient */
 .box {
-  background-image: url({% static 'assets/images/error/share.svg' %});
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size:1000px;
+  /* SVG background layer, repeating with smaller size */
+  background-image: url({% static 'assets/images/brand/logo/bgt.svg' %});
+  background-repeat: repeat; /* Repeat the pattern */
+  background-size: 1500px 1500px; /* Smaller size for a tiled effect */
+  background-position: center; /* Centered starting point */
+  position: relative; /* Ensure layering */
+  min-height: 100vh; /* Full viewport height */
+}
+
+/* Linear gradient overlay with green tones only */
+.box::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  /* Linear gradient from light green to dark green */
+  background: linear-gradient(135deg, rgba(0, 140, 0, 0.6), rgba(0, 85, 0, 0.5)); /* LightGreen to DarkGreen with opacity */
+  z-index: -1; /* Behind the SVG and content */
+}
+
+/* Custom button color for "Se connecter" */
+.btn-custom-green {
+  background-color: #28a745; /* A vibrant green (Bootstrap's success green) */
+  border-color: #28a745; /* Matching border */
+  color: #fff; /* White text for contrast */
+}
+
+/* Hover effect for the button */
+.btn-custom-green:hover {
+  background-color: #218838; /* Slightly darker green on hover */
+  border-color: #1e7e34; /* Matching border on hover */
+  color: #fff;
 }
 </style>
 <!-- container -->
-  <main class="container d-flex flex-column box ">
-    <div class="row align-items-center justify-content-center g-0
-        min-vh-100 ">
-      <div class="col-12 col-md-8 col-lg-6 col-xxl-4 py-8 py-xl-0 ">
-        <a href="#" class="form-check form-switch theme-switch btn btn-light btn-icon rounded-circle d-none ">
-          <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault">
-          <label class="form-check-label" for="flexSwitchCheckDefault"></label>
-  
-           </a>
-        <!-- Card -->
-        <div class="card smooth-shadow-md ">
-          <!-- Card body -->
-          <div class="card-body p-6">
-            <div class="mb-4 ">
-            <img src="{% static 'assets/images/brand/logo/bmedia.svg'%} " alt="Logo" class="w-10 h-10 mb-2 text-inverse"><span class="text-dark  ">   Buja Media Group</span>
-              <p class="mb-4 mt-5">🔑 Veuillez entrer vos informations d'utilisateur.</p>
-            </div>
-            {% if messages %}
-                    {% for message in messages %} 
-                      <div class="alert alert-primary alert-dismissible fade show" role="alert">
-                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-info-circle-fill me-2" viewBox="0 0 16 16">
-                          <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/>
-                        </svg>
-                        <strong>Information !</strong>&nbsp&nbsp{{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
-                          <span aria-hidden="true"></span>
-                        </button>
-                      </div>
-                    {% endfor %}
-                  {% endif %}
-            <!-- Form -->
-            <form class="user" action="" method="post">
-            {% csrf_token %}
-              <!-- Username -->
-              <div class="mb-3">
-                <label for="username" class="form-label">Nom d'utilisateur</label>
-                <input type="text" id="username" class="form-control" name="username" placeholder="Nom d'utilisateur ici" required="">
-              </div>
-              <!-- Password -->
-              <div class="mb-3">
-                <label for="password" class="form-label">Mot de passe</label>
-                <input type="password" id="password" class="form-control" name="password" placeholder="**************" required="">
-              </div>
-
-              <div>
-                <!-- Button -->
-                <div class="d-grid mt-8">
-                  <button type="submit" class="btn btn-primary">Se connecter
-                    </button>
-                </div>
-
-
-              </div>
-
-
-            </form>
+<main class="d-flex flex-column box ">
+  <div class="row align-items-center justify-content-center g-0 min-vh-100 ">
+    <div class="col-12 col-md-8 col-lg-6 col-xxl-4 py-8 py-xl-0 ">
+      <a href="#" class="form-check form-switch theme-switch btn btn-light btn-icon rounded-circle d-none ">
+        <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault">
+        <label class="form-check-label" for="flexSwitchCheckDefault"></label>
+      </a>
+      <!-- Card -->
+      <div class="card smooth-shadow-md ">
+        <!-- Card body -->
+        <div class="card-body p-6">
+          <div class="mb-4 ">
+            <img src="{% static 'assets/images/brand/logo/bmedia.svg'%}" alt="Logo" class="w-10 h-10 mb-2 text-inverse"><span class="text-dark"> Buja Media Group</span>
+            <p class="mb-4 mt-5">🔑 Veuillez entrer vos informations d'utilisateur.</p>
           </div>
+          {% if messages %}
+            {% for message in messages %}
+              <div class="alert alert-primary alert-dismissible fade show" role="alert">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-info-circle-fill me-2" viewBox="0 0 16 16">
+                  <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/>
+                </svg>
+                <strong>Information !</strong>  {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                  <span aria-hidden="true"></span>
+                </button>
+              </div>
+            {% endfor %}
+          {% endif %}
+          <!-- Form -->
+          <form class="user" action="" method="post">
+            {% csrf_token %}
+            <!-- Username -->
+            <div class="mb-3">
+              <label for="username" class="form-label">Nom d'utilisateur</label>
+              <input type="text" id="username" class="form-control" name="username" placeholder="Nom d'utilisateur ici" required="">
+            </div>
+            <!-- Password -->
+            <div class="mb-3">
+              <label for="password" class="form-label">Mot de passe</label>
+              <input type="password" id="password" class="form-control" name="password" placeholder="**************" required="">
+            </div>
+            <div>
+              <!-- Button -->
+              <div class="d-grid mt-8">
+                <button type="submit" class="btn btn-custom-green">Se connecter</button>
+              </div>
+            </div>
+          </form>
         </div>
       </div>
     </div>
-  </main>
-
-
+  </div>
+</main>
 {% endblock %}
