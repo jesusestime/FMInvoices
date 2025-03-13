@@ -1,4 +1,4 @@
-{% load static %}
+{% load static invoice_tags %}
 {% with request.resolver_match.url_name as url_name %}
 <div class="navbar-vertical navbar nav-dashboard">
     <div class="h-100" data-simplebar>
@@ -18,81 +18,80 @@
                 <div class="navbar-heading">Menu</div>
             </li>
 
-            <!-- Nav item: Home -->
+            <!-- Nav item: Home (accessible to all authenticated users) -->
             <li class="nav-item">
                 <a class="nav-link has-arrow {% if url_name == 'index' %} active {% endif %}" href="{% url 'index' %}">
                     <i data-feather="home" class="nav-icon me-2 icon-xxs"></i> Accueil
                 </a>
             </li>
 
-            <!-- Staff or Superuser Section -->
-            {% if request.user.is_authenticated and request.user.is_staff or request.user.is_superuser %}
-            <!-- Nav item: Station Radio Departments -->
-            <li class="nav-item">
-                <a class="nav-link has-arrow {% if url_name == 'station_radio_departement_index' %} active {% endif %}" href="{% url 'station_radio_departement_index' %}">
-                    <i data-feather="radio" class="nav-icon me-2 icon-xxs"></i> Départements Radio
-                </a>
-            </li>
+            <!-- Admin Group Section -->
+            {% if request.user|has_admin_permission %}
+                <!-- Nav item: Station Radio Departments -->
+                <li class="nav-item">
+                    <a class="nav-link has-arrow {% if url_name == 'station_radio_departement_index' %} active {% endif %}" href="{% url 'station_radio_departement_index' %}">
+                        <i data-feather="radio" class="nav-icon me-2 icon-xxs"></i> Départements Radio
+                    </a>
+                </li>
 
-            <!-- Nav item: Emetteur Users -->
-            <li class="nav-item">
-                <a class="nav-link has-arrow {% if url_name == 'utilisateur_emetteur_index' %} active {% endif %}" href="{% url 'utilisateur_emetteur_index' %}">
-                    <i data-feather="user-plus" class="nav-icon me-2 icon-xxs"></i> Utilisateurs Émetteurs
-                </a>
-            </li>
+                <!-- Nav item: Emetteur Users -->
+                <li class="nav-item">
+                    <a class="nav-link has-arrow {% if url_name == 'utilisateur_emetteur_index' %} active {% endif %}" href="{% url 'utilisateur_emetteur_index' %}">
+                        <i data-feather="user-plus" class="nav-icon me-2 icon-xxs"></i> Utilisateurs Émetteurs
+                    </a>
+                </li>
 
-            <!-- Nav item: Clients -->
-            <li class="nav-item">
-                <a class="nav-link has-arrow {% if url_name == 'client_index' %} active {% endif %}" href="{% url 'client_index' %}">
-                    <i data-feather="user-check" class="nav-icon me-2 icon-xxs"></i> Clients
-                </a>
-            </li>
+                <!-- Nav item: Emetteurs (Transmitters) -->
+                <li class="nav-item">
+                    <a class="nav-link has-arrow {% if url_name == 'emetteur_index' %} active {% endif %}" href="{% url 'emetteur_index' %}">
+                        <i data-feather="mic" class="nav-icon me-2 icon-xxs"></i> Émetteurs
+                    </a>
+                </li>
 
-            <!-- Nav item: Emetteurs (Transmitters) -->
-            <li class="nav-item">
-                <a class="nav-link has-arrow {% if url_name == 'emetteur_index' %} active {% endif %}" href="{% url 'emetteur_index' %}">
-                    <i data-feather="mic" class="nav-icon me-2 icon-xxs"></i> Émetteurs
-                </a>
-            </li>
+                <!-- Nav item: Emissions -->
+                <li class="nav-item">
+                    <a class="nav-link has-arrow {% if url_name == 'emission_index' %} active {% endif %}" href="{% url 'emission_index' %}">
+                        <i data-feather="tv" class="nav-icon me-2 icon-xxs"></i> Émissions
+                    </a>
+                </li>
 
-            <!-- Nav item: Emissions -->
-            <li class="nav-item">
-                <a class="nav-link has-arrow {% if url_name == 'emission_index' %} active {% endif %}" href="{% url 'emission_index' %}">
-                    <i data-feather="tv" class="nav-icon me-2 icon-xxs"></i> Émissions
-                </a>
-            </li>
+                <!-- Nav item: Services -->
+                <li class="nav-item">
+                    <a class="nav-link has-arrow {% if url_name == 'service_index' %} active {% endif %}" href="{% url 'service_index' %}">
+                        <i data-feather="settings" class="nav-icon me-2 icon-xxs"></i> Services
+                    </a>
+                </li>
 
-            <!-- Nav item: Services -->
-            <li class="nav-item">
-                <a class="nav-link has-arrow {% if url_name == 'service_index' %} active {% endif %}" href="{% url 'service_index' %}">
-                    <i data-feather="settings" class="nav-icon me-2 icon-xxs"></i> Services
-                </a>
-            </li>
+                <!-- Nav item: Message Categories -->
+                <li class="nav-item">
+                    <a class="nav-link has-arrow {% if url_name == 'categorie_emission_service_index' %} active {% endif %}" href="{% url 'categorie_emission_service_index' %}">
+                        <i data-feather="tag" class="nav-icon me-2 icon-xxs"></i> Catégories d'Émi/Serv
+                    </a>
+                </li>
 
-            <!-- Nav item: Message Categories -->
-            <li class="nav-item">
-                <a class="nav-link has-arrow {% if url_name == 'categorie_emission_service_index' %} active {% endif %}" href="{% url 'categorie_emission_service_index' %}">
-                    <i data-feather="tag" class="nav-icon me-2 icon-xxs"></i> Catégories d'Émi/Serv
-                </a>
-            </li>
-
-
-            <!-- Nav item: Invoices -->
-            <li class="nav-item">
-                <a class="nav-link has-arrow {% if url_name == 'facture_list' %} active {% endif %}" href="{% url 'facture_list' %}">
-                    <i data-feather="file-text" class="nav-icon me-2 icon-xxs"></i> Liste des Factures
-                </a>
-            </li>
+                <!-- Nav item: Users -->
+                <li class="nav-item">
+                    <a class="nav-link has-arrow {% if url_name == 'user_list' %} active {% endif %}" href="{% url 'user_list' %}">
+                        <i data-feather="users" class="nav-icon me-2 icon-xxs"></i> Utilisateurs
+                    </a>
+                </li>
             {% endif %}
 
-            <!-- Superuser Section -->
-            {% if request.user.is_authenticated and request.user.is_superuser %}
-            <!-- Nav item: Users -->
-            <li class="nav-item">
-                <a class="nav-link has-arrow {% if url_name == 'user_list' %} active {% endif %}" href="{% url 'user_list' %}">
-                    <i data-feather="users" class="nav-icon me-2 icon-xxs"></i> Utilisateurs
-                </a>
-            </li>
+            <!-- Facturier Group Section -->
+            {% if request.user|has_facturier_permission %}
+                <!-- Nav item: Clients -->
+                <li class="nav-item">
+                    <a class="nav-link has-arrow {% if url_name == 'client_index' %} active {% endif %}" href="{% url 'client_index' %}">
+                        <i data-feather="user-check" class="nav-icon me-2 icon-xxs"></i> Clients
+                    </a>
+                </li>
+
+                <!-- Nav item: Invoices -->
+                <li class="nav-item">
+                    <a class="nav-link has-arrow {% if url_name == 'facture_list' %} active {% endif %}" href="{% url 'facture_list' %}">
+                        <i data-feather="file-text" class="nav-icon me-2 icon-xxs"></i> Liste des Factures
+                    </a>
+                </li>
             {% endif %}
         </ul>
         {% endif %}
